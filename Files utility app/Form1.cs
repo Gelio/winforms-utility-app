@@ -180,7 +180,12 @@ namespace Files_utility_app
 
         private void ustawieniaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            Form2 settingsForm = new Form2();
+            settingsForm.Extensions = settings.Extensions;
+            settingsForm.MaxDepth = settings.MaxDepth;
+            settingsForm.ShowDialog(this);
+            settings.MaxDepth = settingsForm.MaxDepth;
+            settings.Extensions= settingsForm.Extensions;
         }
     }
 }
