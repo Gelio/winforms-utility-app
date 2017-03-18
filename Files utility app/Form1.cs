@@ -25,7 +25,7 @@ namespace Files_utility_app
             InitializeComponent();
             settings = new AppSettings()
             {
-                MaxDepth = 10,
+                MaxDepth = 1,
                 Extensions = "txt;pdf;bmp;jpg;png"
             };
         }
@@ -186,6 +186,53 @@ namespace Files_utility_app
             settingsForm.ShowDialog(this);
             settings.MaxDepth = settingsForm.MaxDepth;
             settings.Extensions= settingsForm.Extensions;
+        }
+
+        private void wypisywanieToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var extensions = settings.Extensions.Split(';').Select(extension => '.' + extension);
+            listBoxMatchedDirectories.Items.Clear();
+            listBoxMatchedFiles.Items.Clear();
+            
+            foreach (string baseDir in listBoxSelected.Items)
+                RecursiveMatchFiles(baseDir, settings.MaxDepth, extensions);
+        }
+
+        private void RecursiveMatchFiles(string basePath, int maxDepth, IEnumerable<string> extensions)
+        {
+            if (maxDepth > 0)
+            {
+                foreach (string childDirectoryPath in Directory.EnumerateDirectories(basePath))
+                {
+                    try
+                    {
+                        listBoxMatchedDirectories.Items.Add(childDirectoryPath);
+                        RecursiveMatchFiles(childDirectoryPath, maxDepth - 1, extensions);
+                    }
+                    catch { };
+                }
+            }
+            
+
+            foreach (string childFilePath in Directory.EnumerateFiles(basePath))
+            {
+                bool validExtension = false;
+                foreach (string extension in extensions)
+                {
+                    if (childFilePath.Contains(extension))
+                    {
+                        validExtension = true;
+                        break;
+                    }
+                }
+                if (validExtension)
+                    listBoxMatchedFiles.Items.Add(childFilePath);
+            }
+        }
+
+        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

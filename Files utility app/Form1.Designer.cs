@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.listBoxSelected = new System.Windows.Forms.ListBox();
             this.buttonAddToSelected = new System.Windows.Forms.Button();
             this.treeViewDirectory = new System.Windows.Forms.TreeView();
             this.buttonCollapseAll = new System.Windows.Forms.Button();
@@ -45,9 +46,11 @@
             this.wypisywanieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wizualizacjaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.listBoxSelected = new System.Windows.Forms.ListBox();
+            this.listBoxMatchedDirectories = new System.Windows.Forms.ListBox();
+            this.listBoxMatchedFiles = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -74,9 +77,23 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.AllowDrop = true;
-            this.splitContainer1.Size = new System.Drawing.Size(559, 474);
-            this.splitContainer1.SplitterDistance = 286;
+            this.splitContainer1.Panel2.Controls.Add(this.listBoxMatchedFiles);
+            this.splitContainer1.Panel2.Controls.Add(this.listBoxMatchedDirectories);
+            this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
+            this.splitContainer1.Size = new System.Drawing.Size(748, 474);
+            this.splitContainer1.SplitterDistance = 324;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // listBoxSelected
+            // 
+            this.listBoxSelected.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxSelected.FormattingEnabled = true;
+            this.listBoxSelected.Location = new System.Drawing.Point(4, 359);
+            this.listBoxSelected.Name = "listBoxSelected";
+            this.listBoxSelected.Size = new System.Drawing.Size(311, 108);
+            this.listBoxSelected.TabIndex = 9;
+            this.listBoxSelected.DoubleClick += new System.EventHandler(this.listBoxSelected_DoubleClick);
             // 
             // buttonAddToSelected
             // 
@@ -96,7 +113,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewDirectory.Location = new System.Drawing.Point(4, 118);
             this.treeViewDirectory.Name = "treeViewDirectory";
-            this.treeViewDirectory.Size = new System.Drawing.Size(273, 203);
+            this.treeViewDirectory.Size = new System.Drawing.Size(311, 203);
             this.treeViewDirectory.TabIndex = 6;
             this.treeViewDirectory.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeViewDirectory_BeforeExpand);
             // 
@@ -136,14 +153,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDirectory.Location = new System.Drawing.Point(4, 49);
             this.textBoxDirectory.Name = "textBoxDirectory";
-            this.textBoxDirectory.Size = new System.Drawing.Size(196, 20);
+            this.textBoxDirectory.Size = new System.Drawing.Size(234, 20);
             this.textBoxDirectory.TabIndex = 2;
             this.textBoxDirectory.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDirectory_KeyDown);
             // 
             // buttonShowPartitions
             // 
             this.buttonShowPartitions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonShowPartitions.Location = new System.Drawing.Point(188, 88);
+            this.buttonShowPartitions.Location = new System.Drawing.Point(226, 88);
             this.buttonShowPartitions.Name = "buttonShowPartitions";
             this.buttonShowPartitions.Size = new System.Drawing.Size(89, 23);
             this.buttonShowPartitions.TabIndex = 1;
@@ -154,7 +171,7 @@
             // buttonSelect
             // 
             this.buttonSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelect.Location = new System.Drawing.Point(202, 47);
+            this.buttonSelect.Location = new System.Drawing.Point(240, 47);
             this.buttonSelect.Name = "buttonSelect";
             this.buttonSelect.Size = new System.Drawing.Size(75, 23);
             this.buttonSelect.TabIndex = 0;
@@ -169,7 +186,7 @@
             this.pluginyToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(559, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(748, 24);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -185,7 +202,7 @@
             // ustawieniaToolStripMenuItem
             // 
             this.ustawieniaToolStripMenuItem.Name = "ustawieniaToolStripMenuItem";
-            this.ustawieniaToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ustawieniaToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.ustawieniaToolStripMenuItem.Text = "Ustawienia";
             this.ustawieniaToolStripMenuItem.Click += new System.EventHandler(this.ustawieniaToolStripMenuItem_Click);
             // 
@@ -207,31 +224,37 @@
             // wypisywanieToolStripMenuItem
             // 
             this.wypisywanieToolStripMenuItem.Name = "wypisywanieToolStripMenuItem";
-            this.wypisywanieToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.wypisywanieToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.wypisywanieToolStripMenuItem.Text = "Wypisywanie";
+            this.wypisywanieToolStripMenuItem.Click += new System.EventHandler(this.wypisywanieToolStripMenuItem_Click);
             // 
             // wizualizacjaToolStripMenuItem
             // 
             this.wizualizacjaToolStripMenuItem.Name = "wizualizacjaToolStripMenuItem";
-            this.wizualizacjaToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.wizualizacjaToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.wizualizacjaToolStripMenuItem.Text = "Wizualizacja";
             // 
-            // listBoxSelected
+            // listBoxMatchedDirectories
             // 
-            this.listBoxSelected.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBoxSelected.FormattingEnabled = true;
-            this.listBoxSelected.Location = new System.Drawing.Point(4, 359);
-            this.listBoxSelected.Name = "listBoxSelected";
-            this.listBoxSelected.Size = new System.Drawing.Size(273, 108);
-            this.listBoxSelected.TabIndex = 9;
-            this.listBoxSelected.DoubleClick += new System.EventHandler(this.listBoxSelected_DoubleClick);
+            this.listBoxMatchedDirectories.FormattingEnabled = true;
+            this.listBoxMatchedDirectories.Location = new System.Drawing.Point(4, 27);
+            this.listBoxMatchedDirectories.Name = "listBoxMatchedDirectories";
+            this.listBoxMatchedDirectories.Size = new System.Drawing.Size(202, 199);
+            this.listBoxMatchedDirectories.TabIndex = 0;
+            // 
+            // listBoxMatchedFiles
+            // 
+            this.listBoxMatchedFiles.FormattingEnabled = true;
+            this.listBoxMatchedFiles.Location = new System.Drawing.Point(212, 27);
+            this.listBoxMatchedFiles.Name = "listBoxMatchedFiles";
+            this.listBoxMatchedFiles.Size = new System.Drawing.Size(202, 199);
+            this.listBoxMatchedFiles.TabIndex = 0;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(559, 474);
+            this.ClientSize = new System.Drawing.Size(748, 474);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainer1);
             this.MinimumSize = new System.Drawing.Size(500, 200);
@@ -239,6 +262,7 @@
             this.Text = "FileWalker";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
@@ -268,6 +292,8 @@
         private System.Windows.Forms.TreeView treeViewDirectory;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.ListBox listBoxSelected;
+        private System.Windows.Forms.ListBox listBoxMatchedDirectories;
+        private System.Windows.Forms.ListBox listBoxMatchedFiles;
     }
 }
 
