@@ -13,14 +13,21 @@ namespace Files_utility_app
 {
     public partial class Form1 : Form
     {
+        class AppSettings
+        {
+            public int MaxDepth { get; set; }
+            public string Extensions { get; set; }
+        }
+
+        private AppSettings settings;
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
+            settings = new AppSettings()
+            {
+                MaxDepth = 10,
+                Extensions = "txt;pdf;bmp;jpg;png"
+            };
         }
 
         private void buttonShowPartitions_Click(object sender, EventArgs e)
@@ -94,11 +101,24 @@ namespace Files_utility_app
                 catch { };
             }
 
-            foreach (string childPathPath in Directory.EnumerateFiles(basePath))
+            var extensions = settings.Extensions.Split(';').Select(extension => '.' + extension);
+            foreach (string childFilePath in Directory.EnumerateFiles(basePath))
             {
+                bool validExtension = false;
+                foreach (string extension in extensions)
+                {
+                    if (childFilePath.Contains(extension))
+                    {
+                        validExtension = true;
+                        break;
+                    }
+                }
+                if (!validExtension)
+                    continue;
+
                 try
                 {
-                    TreeNode child = new TreeNode(Path.GetFileName(childPathPath));
+                    TreeNode child = new TreeNode(Path.GetFileName(childFilePath));
                     children.Add(child);
                 }
                 catch { };
@@ -156,6 +176,11 @@ namespace Files_utility_app
         {
             if (listBoxSelected.SelectedIndex >= 0)
                 listBoxSelected.Items.RemoveAt(listBoxSelected.SelectedIndex);
+        }
+
+        private void ustawieniaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

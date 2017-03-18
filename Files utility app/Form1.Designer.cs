@@ -185,8 +185,9 @@
             // ustawieniaToolStripMenuItem
             // 
             this.ustawieniaToolStripMenuItem.Name = "ustawieniaToolStripMenuItem";
-            this.ustawieniaToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.ustawieniaToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.ustawieniaToolStripMenuItem.Text = "Ustawienia";
+            this.ustawieniaToolStripMenuItem.Click += new System.EventHandler(this.ustawieniaToolStripMenuItem_Click);
             // 
             // koniecToolStripMenuItem
             // 
