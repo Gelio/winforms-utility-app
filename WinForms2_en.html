@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Windows Forms 2 - example excercise</title>
+	<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <h1>Windows Forms 2</h1>
+    <h2>The extensible application software</h2>
+ 	<p> The aim of the task is to write an application that operates on folders and files, whose functionality can be extended by adding appropriate written libraries - plug-ins. Application allows the user to choose a number of folders and then to select one of the plug-ins, which will operate on selected folders.
+	<br /><a href="WinForms2.zip">Example application</a></p>	
+
+	<h3>Basic functionality - part I</h3>
+	<ul>
+	<li>The application visually divided into two parts - base part on the left (selecting folders), on the right - plugins window
+		<ul>
+			<li>Division using SplitContainer or Splitter</li>
+			<li>The behavior of the controls from the left side as in example application (resizing)</li>
+			<li>Minimum window size is set</li>
+		</ul>
+	</li>
+	<li>Tree showing the file structure
+		<ul>
+			<li>Three ways to add new nodes
+				<ul>
+					<li>By typing the path (the <i>Enter</i> key approval) - if you enter a non-existing folder, a window pops up with an appropriate message</li>
+					<li>By folder selection dialog box (opened with button <i>Select</i>)</li>
+					<li>By pressing button <i>Show partitions</i> - adding all partitions</li>
+				</ul>
+			</li>
+			<li>Button <i>Collapse All</i> - collapses all nodes</li>
+			<li>Button <i>Clear</i> - clears the tree and the list of selected folders</li>
+			<li>Expanding the node will load the direct subfolders and files (it is prohibited to load the whole tree at once!)</li>
+			<li>After expanding all thee folders should have the stamp 'plus', indicating the possibility of further expanding. If the folder is empty, the stamp should disappear when you try to expand</li>
+		</ul>
+	</li>
+	<li>List of selected folders (ListItem)
+		<ul>
+			<li>After clicking button <i>Add to selected</i>, the currently selected folder in the tree is added to the list</li>
+			<li>Double-clicking on any of the elements would result in his removal from the list</li>
+		</ul>
+	</li>
+	<li>Settings
+		<ul>
+			<li>Stored in the application settings (Settings)</li>
+			<li>Depth of recursion - field with numeric value from 1 to 10 - limits the depth of the search, a value of 1 means that only the direct children of a folder would be taken into account</li>
+			<li>File types - text box, extensions separated by a semicolon (eg "txt;doc;odf") - consider only files with specified extensions</li>
+		</ul>
+	</li>
+	<li>Trying on for plug-in - writing out (in separate lists) subfolders and files from the selected folders (including settings, ie the corresponding recursion and filtering file types)</li>
+	<li>As usual, the unresolved issues in the description should be organized as in example application</li>
+	<li>Tips:
+		<ul>
+			<li>TreeView, TreeNode.FullPath</li>
+			<li>Directory.Exists(), DirectoryInfo, EnumerateFiles(), EnumerateDirectories(), FileInfo</li>
+			<li>Environment.GetLogicalDrives()</li>
+			<li>Application.ExecutablePath, DialogResult</li>
+			<li>Control.Tag, Control.Anchor</li>
+		</ul>
+	</li>
+	<li>Scoring:
+		<ul>
+			<li>Tree, selecting folders (full service) - 4 points</li>
+			<li>Writing out subfolders and files, supporting settings - 4 points</li>
+		</ul>
+	</li>
+	</ul>
+	
+	<h3>Extended functionality - part II</h3>
+	<ul>
+	<li>Plug-ins service
+		<ul>
+			<li>Using Reflections mechanism</li>
+			<li>For the purposes of the task, we assume that plug-in is a dll library that contains a class which implements an interface and some control</li>
+			<li>The interface consists of 2 properties and 1 method:
+				<ul>
+					<li>string Name - returns the name of the plug-in</li>
+					<li>string Info - returns a short description of the plug-in</li>
+					<li>PluginControl GetControl(), where "PluginControl" is the control mentioned earlier </li>
+				</ul>
+			</li>
+			<li>We assume that the plug-ins can be found in the specified folder ('plugins'). After launching the application finds dll files in this folder, ensures that they are correct (just check whether the library contains a class that implements the plug-in interface), and then adds them to the menu (using the name of the plug-in) and sets the tooltip (with description)</li>
+			<li>After selecting the plug-in from the menu on the right side, application shows the proper control, including the output of the plug-in or options that enable to start working</li>
+		</ul>
+	</li>
+	<li>Plug-in - writing out subfolders and files (as in the previous part, but in the form of plug-in)</li>
+	<li>Plug-in - visualization
+		<ul>
+			<li>Plug-in shows two charts presenting the number of files of each type and their total size (measured in hundreds kB)</li>
+			<li>Two types of chart to choose (RadioButton) - bar and pie</li>
+			<li>The bar chart - described axes (Y axis which is described with step of power of 10), bars decribed with extension, levels</li>
+			<li>The pie chart - legend</li>
+			<li>Charts must be self-painted using painting functions, the use of controls or Labels is strictly prohibited!</li>
+		</ul>
+	</li>
+	<li>Tips:
+		<ul>
+			<li>Assembly.LoadFrom(), Assembly.GetTypes(), Type.IsAssignableFrom(), Activator.CreateInstance()</li>
+			<li>Project-&gt;Properties-&gt;Build Events-&gt;Post Build ... -&gt; copy "$(TargetPath)" "$(SolutionDir)plugins\$(ProjectName).dll"</li>
+		</ul>
+	</li>
+	<li>Scoring:
+		<ul>
+			<li>Creating the plug-in menu - 4 points</li>
+			<li>Plug-in (writing out subfolders and files) - 2 points</li>
+			<li>Plug-in (visualization) - 6 points</li>
+		</ul>
+	</li>
+	</ul>
+</body></html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Windows Forms 2 - zadanie przykładowe</title>
+	<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <h1>Windows Forms 2</h1>
+    <h2>Rozszerzalna aplikacja użytkowa</h2>
+ 	<p>Celem zadania jest napisanie aplikacji operującej na folderach i plikach, której funkcjonalność można rozszerzać poprzez dodawanie odpowiednio napisanych bibliotek - pluginów. Działanie aplikacji polega na wyborze pewnej liczby folderów, a następnie wybraniu jednego z pluginów, który operować będzie na wybranych folderach.
+	<br /><a href="WinForms2.zip">Wzór</a></p>
+
+	<h3>Funkcjonalność podstawowa - część I</h3>
+	<ul>
+	<li>Aplikacja wizualnie podzielona na dwie części - po lewej część bazowa (wybór folderów), po prawej - okno pluginów
+		<ul>
+			<li>Podział przy użyciu SplitContainera lub Splittera</li>
+			<li>Zachowanie kontrolek z lewej strony jak w aplikacji wzorcowej (dopasowywanie rozmiaru)</li>
+			<li>Ustawiony rozmiar minimalny okna</li>
+		</ul>
+	</li>
+	<li>Drzewo prezentujące strukturę plików
+		<ul>
+			<li>Dodawanie nowych węzłów możliwe na trzy sposoby
+				<ul>
+					<li>Przez wpisanie ścieżki (zatwierdzenie klawiszem <i>Enter</i>) - w przypadku wpisania nieistniejącego folderu wyskakuje okienko z odpowiednią wiadomością</li>
+					<li>Przez okno dialogowe wyboru folderu (otwierane przyciskiem <i>Wybierz</i>)</li>
+					<li>Przez wciśnęcie przycisku <i>Pokaż partycje</i> - dodaje wszystkie partycje</li>
+				</ul>
+			</li>
+			<li>Przycisk <i>Zwiń wszystkie</i> - zwija wszystkie węzły</li>
+			<li>Przycisk <i>Czyść</i> - czyści drzewo oraz listę wybranych folderów</li>
+			<li>Rozwinięcie węzła powoduje wczytanie jego bezpośrednich podfolderów i plików (zabronione jest wczytywanie całego drzewa na raz!)</li>
+			<li>Tuż po rozwinięciu wszystkie foldery powinny mieć znaczek 'plusa', wskazujący na możliwość dalszego rozwinięcia. Jeżeli folder jest pusty, to znaczek ten powinien zniknąć po próbie jego rozwinięcia</li>
+		</ul>
+	</li>
+	<li>Lista wybranych folderów (ListItem)
+		<ul>
+			<li>Po kliknięciu przycisku <i>Dodaj do wybranych</i> aktualnie zaznaczony folder w drzewie zostaje dodany do listy</li>
+			<li>Dwukrotne kliknięcie na którymś z elementów skutkuje jego usunięciem z listy</li>
+		</ul>
+	</li>
+	<li>Ustawienia
+		<ul>
+			<li>Przechowywane w ustawieniach aplikacji (Settings)</li>
+			<li>Głębokość rekurencji - pole numeryczne, wartości od 1 do 10 - ograniczenie głębokości przeszukiwania, wartość 1 oznacza że uwzględniamy tylko bezpośrednie dzieci danego folderu</li>
+			<li>Typy plików - pole tekstowe, rozszerzenia oddzielone średnikiem (np. "txt;doc;odf") - uwzględniamy tylko pliki o podanych rozszerzeniach</li>
+		</ul>
+	</li>
+	<li>Przymiarka do pluginu - wypisywanie (w osobnych listach) podfolderów i plików zawartych w wybranych folderach (z uwzględnieniem ustawień, tzn. z odpowiednim zagnieżdżeniem oraz filtrowaniem typów plików) </li>
+	<li>Jak zwykle, kwestie nierozstrzygnięte w opisie należy wzorować na działaniu aplikacji wzorcowej</li>
+	<li>Wskazówki
+		<ul>
+			<li>TreeView, TreeNode.FullPath</li>
+			<li>Directory.Exists(), DirectoryInfo, EnumerateFiles(), EnumerateDirectories(), FileInfo</li>
+			<li>Environment.GetLogicalDrives()</li>
+			<li>Application.ExecutablePath, DialogResult</li>
+			<li>Control.Tag, Control.Anchor</li>
+		</ul>
+	</li>
+	<li>Punktacja:
+		<ul>
+			<li>Drzewo, wybieranie folderów (pełna obsługa) - 4 pkt</li>
+			<li>Wypisywanie podfolderów i plików, obsługa ustawień - 4 pkt</li>
+		</ul>
+	</li>
+	</ul>
+	
+	<h3>Funkcjonalność rozszerzona - część II</h3>
+	<ul>
+	<li>Obsługa pluginów
+		<ul>
+			<li>Wykorzystanie mechanizmu Reflections</li>
+			<li>Na potrzeby zadania przyjmujemy że plugin to biblioteka dll zawierająca klasę implementującą pewien interfejs oraz pewną kontrolkę</li>
+			<li>Interfejs zawiera 2 właściwości i metodę:
+				<ul>
+					<li>string Name - zwraca nazwę pluginu</li>
+					<li>string Info - zwraca krótki opis działania pluginu</li>
+					<li>PluginControl GetControl(), gdzie "PluginControl" to wspomniania wcześniej kontrolka</li>
+				</ul>
+			</li>
+			<li>Zakładamy że pluginy znajdują się w określonym folderze ('plugins'). Po uruchomieniu aplikacja znajduje pliki dll znajdujące się  w tym folderze, upewnia się że są one poprawne (wystarczy sprawdzić czy  biblioteka zawiera klasę implementującą interfejs pluginu), po czym dodaje je do menu (używając nazwy pluginu) i ustawia tooltipa (używając opisu)</li>
+			<li>Po wyborze pluginu z menu w prawej części aplikacji pokazuje się odpowiednia kontrolka, zawierająca wynik działania pluginu lub opcje umożliwiające rozpoczęcie działania</li>
+		</ul>
+	</li>	
+	<li>Plugin - wypisywanie podfolderów i plików (tak jak w poprzedniej części, lecz w formie pluginu)</li>
+	<li>Plugin - wizualizacja
+		<ul>
+			<li>Plugin pokazuje dwa wykresy prezentujące liczbę plików każdego typu i ich sumaryczny rozmiar (liczony w setkach kB)</li>
+			<li>Do wyboru (RadioButton) dwa typy wykresów - słupkowy i kołowy</li>
+			<li>Wykres słupkowy - opisane osie (oś Y opisana z krokiem będącym potęgą 10), słupki opisane rozszerzeniem, poziomice</li>
+			<li>Wykres kołowy - legenda</li>
+			<li>Wykresy muszą być samodzielnie malowane przy użyciu funkcji malujących, używanie kontrolek czy Labeli jest zabronione!</li>
+		</ul>
+	</li>
+	<li>Wskazówki:
+		<ul>
+			<li>Assembly.LoadFrom(), Assembly.GetTypes(), Type.IsAssignableFrom(), Activator.CreateInstance()</li>
+			<li>Project-&gt;Properties-&gt;Build Events-&gt;Post Build ... -&gt; copy "$(TargetPath)" "$(SolutionDir)plugins\$(ProjectName).dll"</li>
+		</ul>
+	</li>
+	<li>Punktacja:
+		<ul>
+			<li>Tworzenie menu pluginów - 4 pkt</li>
+			<li>Plugin (wypisywanie podfolderów i plików) - 2 pkt</li>
+			<li>Plugin (wizualizacja) - 6 pkt</li>
+		</ul>
+	</li>
+	</ul>
+</body></html>
